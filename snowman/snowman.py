@@ -40,7 +40,7 @@ def snowman(snowman_word):
 
         if len(wrong_letters) == SNOWMAN_MAX_WRONG_GUESSES:
             # show a losing message along with the full word
-            print(f"Sorry, you lose! The word was {snowman}")
+            print(f"Sorry, you lose! The word was {snowman_word}")
             return
 
 
@@ -52,7 +52,7 @@ def build_snowman_graphic(num_wrong_guesses):
 
     # get the part of the snowman for the number of wrong guesses
     lines = []
-    for line_no in range(num_wrong_guesses - 1):
+    for line_no in range(num_wrong_guesses):
         lines.append(SNOWMAN_IMAGE[line_no])
 
     return "\n".join(lines)
@@ -82,7 +82,8 @@ def build_word_dict(word):
     word_dict = {}
     for letter in word:
         # keep track of any character a player might guess (alphabetic)
-        word_dict[letter] = False
+        if letter.isalpha():
+            word_dict[letter] = False
 
     return word_dict
 
@@ -100,22 +101,21 @@ def is_word_guessed(word_dict):
 def build_game_board(word, word_dict):
     output_letters = []
     for elem in word:
-        if elem in word_dict:
-            # automatically add any character a player wouldn't be able to guess
+        if elem.isalpha() and elem in word_dict and word_dict[elem]:
             output_letters += elem
-        elif word_dict[elem]:
-            # add any letters the player has guessed
-            output_letters += elem
-        else:
-            # add a blank for any letter not yet guessed
+        elif elem.isalpha():
             output_letters += "_"
-
+        else:
+            output_letters += " "
     return " ".join(output_letters)
 
 
 def add_wrong_letter(wrong_letters, letter):
     # track the wrong guesses in alphabetical order
-    wrong_letters.append(letter)
+    index = 0
+    while index < len(wrong_letters) and letter > wrong_letters[index]:
+        index += 1
+    wrong_letters.insert(index, letter)
 
 
 # There are no issues in this function
